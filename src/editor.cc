@@ -27,7 +27,7 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	// render cursor
 	attron(COLOR_PAIR(COLOUR_PAIR_CURSOR));
 	move(cury + 1 + scrollY, curx);
-	if (curx > fbuf[cury].length())
+	if (curx >= fbuf[cury].length())
 		addch(' ');
 	else
 		addch(fbuf[cury][curx]);
