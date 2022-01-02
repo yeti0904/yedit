@@ -76,6 +76,39 @@ int main(int argc, char** argv) {
 				alert.h = LINES - 4;
 				break;
 			}
+			case KEY_BACKSPACE: {
+				if (curx > 0) {
+					fbuf[cury].erase(curx - 1, 1);
+					--curx;
+				}
+				break;
+			}
+			case KEY_LEFT: {
+				if (curx > 0)
+					--curx;
+				break;
+			}
+			case KEY_RIGHT: {
+				if (curx < fbuf[cury].size())
+					++curx;
+				break;
+			}
+			case KEY_UP: {
+				if (cury > 0) {
+					--cury;
+					if (curx > fbuf[cury].size())
+						curx = fbuf[cury].size();
+				}
+				break;
+			}
+			case KEY_DOWN: {
+				if (cury < fbuf.size() - 1) {
+					++cury;
+					if (curx > fbuf[cury].size())
+						curx = fbuf[cury].size();
+				}
+				break;
+			}
 			case ctrl('q'): {
 				run = false;
 				break;

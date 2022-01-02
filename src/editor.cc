@@ -18,8 +18,9 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 
 	// render editor contents
 	move(1, 0);
-	for (size_t i = scrollY; (i<fbuf.size()) && (i < LINES - 2); ++i) {
+	for (size_t i = scrollY; i < fbuf.size(); i++) {
 		addstr(fbuf[i].c_str());
+		addch('\n');
 	}
 
 	attroff(COLOR_PAIR(COLOUR_PAIR_EDITOR));
