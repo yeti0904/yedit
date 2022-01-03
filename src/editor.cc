@@ -12,15 +12,16 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 
 	// render editor
 	attron(COLOR_PAIR(COLOUR_PAIR_EDITOR));
-	for (int i = 1; i < LINES - 1; i++) {
+	for (int i = 1; i < LINES - 1; ++i) {
 		mvhline(i, 0, ' ', COLS);
 	}
 
 	// render editor contents
 	move(1, 0);
-	for (size_t i = scrollY; i < fbuf.size(); i++) {
+	for (size_t i = scrollY; i < fbuf.size(); ++i) {
 		addstr(fbuf[i].c_str());
-		addch('\n');
+		// move to next line
+		move(i + 2 - scrollY, 0);
 	}
 
 	attroff(COLOR_PAIR(COLOUR_PAIR_EDITOR));

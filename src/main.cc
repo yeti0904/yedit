@@ -4,7 +4,7 @@
 
 /*
 	yedit: a free text editor
-	Copyright (C) 2021  MESYETI
+	Copyright (C) 2022  MESYETI
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -81,6 +81,14 @@ int main(int argc, char** argv) {
 					fbuf[cury].erase(curx - 1, 1);
 					--curx;
 				}
+				else {
+					// remove current line because it is being deleted
+					if (cury > 0) {
+						fbuf.erase(fbuf.begin() + cury);
+						-- cury;
+						curx = fbuf[cury].size();
+					}
+				}
 				break;
 			}
 			case KEY_LEFT: {
@@ -115,6 +123,7 @@ int main(int argc, char** argv) {
 			}
 			case '\n': {
 				++ cury;
+				curx = 0;
 				if (cury >= fbuf.size()) fbuf.push_back("");
 				break;
 			}
