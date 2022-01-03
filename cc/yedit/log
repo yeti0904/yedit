@@ -1,0 +1,35 @@
+==158== Memcheck, a memory error detector
+==158== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==158== Using Valgrind-3.16.1 and LibVEX; rerun with -h for copyright info
+==158== Command: ./bin/yedit
+==158== Parent PID: 69
+==158== 
+==158== error calling PR_SET_PTRACER, vgdb might block
+==158== 
+==158== Process terminating with default action of signal 6 (SIGABRT)
+==158==    at 0x4AD1CE1: raise (raise.c:51)
+==158==    by 0x4ABB536: abort (abort.c:79)
+==158==    by 0x49497EB: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==158==    by 0x4954965: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==158==    by 0x49549D0: std::terminate() (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==158==    by 0x4954C64: __cxa_throw (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==158==    by 0x494C112: ??? (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==158==    by 0x49E3107: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::erase(unsigned long, unsigned long) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==158==    by 0x10ACF3: main (main.cc:81)
+==158== 
+==158== HEAP SUMMARY:
+==158==     in use at exit: 110,539 bytes in 431 blocks
+==158==   total heap usage: 447 allocs, 16 frees, 192,650 bytes allocated
+==158== 
+==158== LEAK SUMMARY:
+==158==    definitely lost: 0 bytes in 0 blocks
+==158==    indirectly lost: 0 bytes in 0 blocks
+==158==      possibly lost: 856 bytes in 10 blocks
+==158==    still reachable: 109,683 bytes in 421 blocks
+==158==                       of which reachable via heuristic:
+==158==                         stdstring          : 93 bytes in 1 blocks
+==158==         suppressed: 0 bytes in 0 blocks
+==158== Rerun with --leak-check=full to see details of leaked memory
+==158== 
+==158== For lists of detected and suppressed errors, rerun with: -s
+==158== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
