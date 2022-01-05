@@ -3,6 +3,7 @@
 // C headers
 #include <cstdint>
 #include <unistd.h>
+#include <sys/sysinfo.h>
 
 // C++ headers
 #include <string>

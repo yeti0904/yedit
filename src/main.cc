@@ -31,6 +31,7 @@ int main(int argc, char** argv) {
 	vector <string> fbuf       = {""};
 	string          fname      = "Unnamed.txt";
 	bool            alertShown = true;
+	bool            saved      = false;
 	uint16_t        input;
 	size_t          cury       = 0;
 	size_t         	curx       = 0;
@@ -53,17 +54,17 @@ int main(int argc, char** argv) {
 	alert.contents = 
 	"(Press space to close this notice)\n"
 	"This program is free software: you can redistribute it and/or modify\n"
-    "it under the terms of the GNU General Public License as published by\n"
-    "the Free Software Foundation, either version 3 of the License, or\n"
-    "(at your option) any later version.\n"
+	"it under the terms of the GNU General Public License as published by\n"
+	"the Free Software Foundation, either version 3 of the License, or\n"
+	"(at your option) any later version.\n"
 	"\n"
-    "This program is distributed in the hope that it will be useful,\n"
-    "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-    "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-    "GNU General Public License for more details.\n"
+	"This program is distributed in the hope that it will be useful,\n"
+	"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+	"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+	"GNU General Public License for more details.\n"
 	"\n"
-    "You should have received a copy of the GNU General Public License\n"
-    "along with this program.  If not, see <https://www.gnu.org/licenses/>.\n";
+	"You should have received a copy of the GNU General Public License\n"
+	"along with this program.  If not, see <https://www.gnu.org/licenses/>.\n";
 
 	while (run) {
 		Editor::Render("fn: " + fname, fbuf, scrollY, curx, cury);
@@ -106,6 +107,8 @@ int main(int argc, char** argv) {
 					--cury;
 					if (curx > fbuf[cury].size())
 						curx = fbuf[cury].size();
+					if (scrollY > 0)
+						--scrollY;
 				}
 				break;
 			}
@@ -114,6 +117,8 @@ int main(int argc, char** argv) {
 					++cury;
 					if (curx > fbuf[cury].size())
 						curx = fbuf[cury].size();
+					if (cury - scrollY > LINES - 4)
+						++scrollY;
 				}
 				break;
 			}
@@ -122,9 +127,17 @@ int main(int argc, char** argv) {
 				break;
 			}
 			case '\n': {
-				++ cury;
+				// insert if not at end of line
+				if (curx < fbuf[cury].size()) {
+					fbuf.insert(fbuf.begin() + cury + 1, fbuf[cury].substr(curx));
+					fbuf[cury].erase(curx);
+				}
+				else {
+					// insert new line
+					fbuf.insert(fbuf.begin() + cury + 1, "");
+				}
 				curx = 0;
-				if (cury >= fbuf.size()) fbuf.push_back("");
+				++ cury;
 				break;
 			}
 			case ' ': {
