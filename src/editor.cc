@@ -68,3 +68,18 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	addstr(statusbar.c_str());
 	attroff(COLOR_PAIR(COLOUR_PAIR_BAR));
 }
+
+void Editor::SaveFile(string& fname, vector <string>& fbuf, UI::Alert& alert) {
+	ofstream fhnd(fname);
+	if (!fhnd.is_open()) {
+		alert.text = "Failed to save";
+		alert.time = 3000;
+		return;
+	}
+	for (size_t i = 0; i<fbuf.size(); ++i) {
+		fhnd << fbuf[i] << "\n";
+	}
+	fhnd.close();
+	alert.text = "Saved to " + fname;
+	alert.time = 3000;
+}

@@ -5,3 +5,5 @@
 #define COLOUR_PAIR_CURSOR 3
 #define COLOUR_PAIR_TIME   4
 #define COLOUR_PAIR_MEM    5
+#define COLOUR_PAIR_ESC    6
+#define COLOUR_PAIR_ALERT  7

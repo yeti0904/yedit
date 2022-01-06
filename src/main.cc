@@ -25,18 +25,19 @@
 #include "editor.hh"
 #include "uiwindow.hh"
 #include "colourpairs.hh"
+#include "alert.hh"
 
 int main(int argc, char** argv) {
 	vector <string> args;
-	vector <string> fbuf       = {""};
-	string          fname      = "Unnamed.txt";
-	bool            alertShown = true;
-	bool            saved      = false;
+	vector <string> fbuf        = {""};
+	string          fname       = "Unnamed.txt";
+	bool            noticeShown = true;
+	bool            saved       = false;
 	uint16_t        input;
-	size_t          cury       = 0;
-	size_t         	curx       = 0;
-	size_t          scrollY    = 0;
-	bool            run        = true;
+	size_t          cury        = 0;
+	size_t         	curx        = 0;
+	size_t          scrollY     = 0;
+	bool            run         = true;
 
 	for (size_t i = 0; i<argc; ++i) {
 		args.push_back(argv[i]);
@@ -44,14 +45,14 @@ int main(int argc, char** argv) {
 
 	IOHandle::Init();
 
-	UI::Window alert;
-	alert.x = 2;
-	alert.y = 2;
-	alert.w = COLS - 4;
-	alert.h = LINES - 4;
-	alert.colour_pair = COLOUR_PAIR_BAR;
-	alert.title = "Notice";
-	alert.contents = 
+	UI::Window notice;
+	notice.x = 2;
+	notice.y = 2;
+	notice.w = COLS - 4;
+	notice.h = LINES - 4;
+	notice.colour_pair = COLOUR_PAIR_BAR;
+	notice.title = "Notice";
+	notice.contents = 
 	"(Press space to close this notice)\n"
 	"This program is free software: you can redistribute it and/or modify\n"
 	"it under the terms of the GNU General Public License as published by\n"
@@ -66,15 +67,21 @@ int main(int argc, char** argv) {
 	"You should have received a copy of the GNU General Public License\n"
 	"along with this program.  If not, see <https://www.gnu.org/licenses/>.\n";
 
+	UI::Alert alert;
+
 	while (run) {
 		Editor::Render("fn: " + fname, fbuf, scrollY, curx, cury);
-		if (alertShown)
+		if (alert.time > 0) {
+			alert.DoTime();
 			alert.Render();
+		}
+		if (noticeShown)
+			notice.Render();
 		input = getch();
 		switch (input) {
 			case KEY_RESIZE: {
-				alert.w = COLS - 4;
-				alert.h = LINES - 4;
+				notice.w = COLS - 4;
+				notice.h = LINES - 4;
 				break;
 			}
 			case KEY_BACKSPACE: {
@@ -122,6 +129,10 @@ int main(int argc, char** argv) {
 				}
 				break;
 			}
+			case ctrl('s'): {
+				Editor::SaveFile(fname, fbuf, alert);
+				break;
+			}
 			case ctrl('q'): {
 				run = false;
 				break;
@@ -141,8 +152,8 @@ int main(int argc, char** argv) {
 				break;
 			}
 			case ' ': {
-				if (alertShown) {
-					alertShown = false;
+				if (noticeShown) {
+					noticeShown = false;
 					break;
 				}
 			}
