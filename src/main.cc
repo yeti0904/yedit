@@ -85,18 +85,7 @@ int main(int argc, char** argv) {
 				break;
 			}
 			case KEY_BACKSPACE: {
-				if (curx > 0) {
-					fbuf[cury].erase(curx - 1, 1);
-					--curx;
-				}
-				else {
-					// remove current line because it is being deleted
-					if (cury > 0) {
-						fbuf.erase(fbuf.begin() + cury);
-						-- cury;
-						curx = fbuf[cury].size();
-					}
-				}
+				Editor::Backspace(fbuf, curx, cury);
 				break;
 			}
 			case KEY_LEFT: {
@@ -138,17 +127,7 @@ int main(int argc, char** argv) {
 				break;
 			}
 			case '\n': {
-				// insert if not at end of line
-				if (curx < fbuf[cury].size()) {
-					fbuf.insert(fbuf.begin() + cury + 1, fbuf[cury].substr(curx));
-					fbuf[cury].erase(curx);
-				}
-				else {
-					// insert new line
-					fbuf.insert(fbuf.begin() + cury + 1, "");
-				}
-				curx = 0;
-				++ cury;
+				Editor::Newline(fbuf, curx, cury);
 				break;
 			}
 			case ' ': {

@@ -83,3 +83,32 @@ void Editor::SaveFile(string& fname, vector <string>& fbuf, UI::Alert& alert) {
 	alert.text = "Saved to " + fname;
 	alert.time = 3000;
 }
+
+void Editor::Backspace(vector <string>& fbuf, size_t& curx, size_t& cury) {
+	if (curx > 0) {
+		fbuf[cury].erase(curx - 1, 1);
+		--curx;
+	}
+	else {
+		if (cury > 0) {
+			fbuf[cury - 1] += fbuf[cury];
+			fbuf.erase(fbuf.begin() + cury);
+			-- cury;
+			curx = fbuf[cury].size();
+		}
+	}
+}
+
+void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury) {
+	// insert if not at end of line
+	if (curx < fbuf[cury].size()) {
+		fbuf.insert(fbuf.begin() + cury + 1, fbuf[cury].substr(curx));
+		fbuf[cury].erase(curx);
+	}
+	else {
+		// insert new line
+		fbuf.insert(fbuf.begin() + cury + 1, "");
+	}
+	curx = 0;
+	++ cury;
+}
