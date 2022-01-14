@@ -69,6 +69,16 @@ int main(int argc, char** argv) {
 
 	UI::Alert alert;
 
+	UI::Window textbox;
+	textbox.isTextbox    = true;
+	textbox.x             = COLS / 2 - 15;
+	textbox.y             = LINES / 2 - 3;
+	textbox.w             = 30;
+	textbox.h             = 5;
+	textbox.contents      = "Press enter to finish";
+	textbox.TextboxReset();
+	textbox.textboxFinishedInput = true;
+
 	while (run) {
 		Editor::Render("fn: " + fname, fbuf, scrollY, curx, cury);
 		if (alert.time > 0) {
@@ -77,74 +87,21 @@ int main(int argc, char** argv) {
 		}
 		if (noticeShown)
 			notice.Render();
-		input = getch();
-		switch (input) {
-			case KEY_RESIZE: {
-				notice.w = COLS - 4;
-				notice.h = LINES - 4;
-				break;
-			}
-			case KEY_BACKSPACE: {
-				Editor::Backspace(fbuf, curx, cury);
-				break;
-			}
-			case KEY_LEFT: {
-				if (curx > 0)
-					--curx;
-				break;
-			}
-			case KEY_RIGHT: {
-				if (curx < fbuf[cury].size())
-					++curx;
-				break;
-			}
-			case KEY_UP: {
-				if (cury > 0) {
-					--cury;
-					if (curx > fbuf[cury].size())
-						curx = fbuf[cury].size();
-					if (scrollY > 0)
-						--scrollY;
-				}
-				break;
-			}
-			case KEY_DOWN: {
-				if (cury < fbuf.size() - 1) {
-					++cury;
-					if (curx > fbuf[cury].size())
-						curx = fbuf[cury].size();
-					if (cury - scrollY > LINES - 4)
-						++scrollY;
-				}
-				break;
-			}
-			case ctrl('s'): {
+		if (!textbox.textboxFinishedInput) {
+			textbox.Render();
+			textbox.x = COLS / 2 - 15;
+			textbox.y  = LINES / 2 - 3;
+		}
+		if (textbox.textboxFinishedInput) {
+			Editor::Input(fbuf, curx, cury, alert, notice, run, noticeShown, scrollY, fname, textbox);
+		}
+		else {
+			run = textbox.TextboxInput();
+			if (textbox.textboxFinishedInput) {
 				Editor::SaveFile(fname, fbuf, alert);
-				break;
-			}
-			case ctrl('q'): {
-				run = false;
-				break;
-			}
-			case '\n': {
-				Editor::Newline(fbuf, curx, cury);
-				break;
-			}
-			case ' ': {
-				if (noticeShown) {
-					noticeShown = false;
-					break;
-				}
-			}
-			default: {
-				if (((input >= ' ') && (input <= '~')) || (input == '\t')) {
-					++ curx;
-					if (curx >= fbuf[cury].size()) fbuf[cury] += input;
-					else fbuf[cury].insert(curx, 1, input);
-				}
-				break;
 			}
 		}
+		refresh();
 		usleep(1000000 / 60); // 60fps
 	}
 	IOHandle::Exit();

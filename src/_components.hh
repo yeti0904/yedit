@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <unistd.h>
 #include <sys/sysinfo.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 // C++ headers
 #include <string>

@@ -2,6 +2,8 @@
 #include "editor.hh"
 #include "constants.hh"
 #include "colourpairs.hh"
+#include "iohandle.hh"
+#include "terminal.hh"
 
 const string currentTime() {
 	time_t     now = time(0);
@@ -28,6 +30,11 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	addstr(currentTime().c_str());
 	attroff(COLOR_PAIR(COLOUR_PAIR_TIME));
 
+	/*
+
+	Here lies yedit memory usage
+	3rd January 2022 - 14th January 2022
+
 	attron(COLOR_PAIR(COLOUR_PAIR_MEM));
 	string mem;
 	// get memory usage percentage
@@ -35,6 +42,7 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	move(0, COLS - mem.length() - currentTime().length());
 	addstr(mem.c_str());
 	attroff(COLOR_PAIR(COLOUR_PAIR_MEM));
+	*/
 
 	// render editor
 	attron(COLOR_PAIR(COLOUR_PAIR_EDITOR));
@@ -87,7 +95,7 @@ void Editor::SaveFile(string& fname, vector <string>& fbuf, UI::Alert& alert) {
 void Editor::Backspace(vector <string>& fbuf, size_t& curx, size_t& cury) {
 	if (curx > 0) {
 		fbuf[cury].erase(curx - 1, 1);
-		--curx;
+		-- curx;
 	}
 	else {
 		if (cury > 0) {
@@ -111,4 +119,87 @@ void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury) {
 	}
 	curx = 0;
 	++ cury;
+}
+
+void Editor::Input(
+	vector <string>& fbuf, size_t& curx, size_t& cury, UI::Alert& alert, UI::Window& notice, 
+	bool& run, bool& noticeShown, size_t& scrollY, string& fname, UI::Window& textbox
+) {
+	uint16_t input = getch();
+	switch (input) {
+		case KEY_RESIZE: {
+			notice.w = COLS - 4;
+			notice.h = LINES - 4;
+			break;
+		}
+		case KEY_BACKSPACE: {
+			Editor::Backspace(fbuf, curx, cury);
+			break;
+		}
+		case KEY_LEFT: {
+			if (curx > 0)
+				--curx;
+			break;
+		}
+		case KEY_RIGHT: {
+			if (curx < fbuf[cury].size())
+				++curx;
+			break;
+		}
+		case KEY_UP: {
+			if (cury > 0) {
+				--cury;
+				if (curx > fbuf[cury].size())
+					curx = fbuf[cury].size();
+				if (scrollY > 0)
+					--scrollY;
+			}
+			break;
+		}
+		case KEY_DOWN: {
+			if (cury < fbuf.size() - 1) {
+				++cury;
+				if (curx > fbuf[cury].size())
+					curx = fbuf[cury].size();
+				if (cury - scrollY > LINES - 4)
+					++scrollY;
+			}
+			break;
+		}
+		case ctrl('s'): {
+			if (fname == "Unnamed.txt") {
+				textbox.contents             = "Enter file name:";
+				textbox.title                = "Save";
+				textbox.textboxFinishedInput = false;
+			}
+			else Editor::SaveFile(fname, fbuf, alert);
+			break;
+		}
+		case ctrl('q'): {
+			run = false;
+			break;
+		}
+		case ctrl('t'): {
+			Terminal::Run();
+			break;
+		}
+		case '\n': {
+			Editor::Newline(fbuf, curx, cury);
+			break;
+		}
+		case ' ': {
+			if (noticeShown) {
+				noticeShown = false;
+				break;
+			}
+		}
+		default: {
+			if (((input >= ' ') && (input <= '~')) || (input == '\t')) {
+				++ curx;
+				if (curx >= fbuf[cury].size()) fbuf[cury] += input;
+				else fbuf[cury].insert(curx, 1, input);
+			}
+			break;
+		}
+	}
 }
