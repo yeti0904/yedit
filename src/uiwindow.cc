@@ -70,9 +70,10 @@ void UI::Window::Render() {
 			if (i == textboxCurx)
 				attroff(A_REVERSE);
 		}
-		for (size_t i = 0; i<w - 3 - textboxInput.length(); ++i) {
-			addch(' ');
-		}
+		if (w -3 > textboxInput.length())
+			for (size_t i = 0; i<w - 3 - textboxInput.length(); ++i) {
+				addch(' ');
+			}
 		attroff(COLOR_PAIR(textboxColour));
 	}
 }

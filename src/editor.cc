@@ -92,6 +92,23 @@ void Editor::SaveFile(string& fname, vector <string>& fbuf, UI::Alert& alert) {
 	alert.time = 3000;
 }
 
+void Editor::OpenFile(string& fname, vector <string>& fbuf, UI::Alert& alert) {
+	ifstream fhnd(fname);
+	if (!fhnd.is_open()) {
+		alert.text = "Failed to open";
+		alert.time = 3000;
+		return;
+	}
+	fbuf.clear();
+	string line;
+	while (getline(fhnd, line)) {
+		fbuf.push_back(line);
+	}
+	fhnd.close();
+	alert.text = "Opened " + fname;
+	alert.time = 3000;
+}
+
 void Editor::Backspace(vector <string>& fbuf, size_t& curx, size_t& cury) {
 	if (curx > 0) {
 		fbuf[cury].erase(curx - 1, 1);
@@ -152,7 +169,7 @@ void Editor::Input(
 				if (curx > fbuf[cury].size())
 					curx = fbuf[cury].size();
 				if (scrollY > 0)
-					--scrollY;
+					-- scrollY;
 			}
 			break;
 		}
@@ -161,18 +178,35 @@ void Editor::Input(
 				++cury;
 				if (curx > fbuf[cury].size())
 					curx = fbuf[cury].size();
-				if (cury - scrollY > LINES - 4)
-					++scrollY;
+				if (cury - scrollY > LINES - 3)
+					++ scrollY;
 			}
 			break;
 		}
 		case ctrl('s'): {
+			// save
 			if (fname == "Unnamed.txt") {
+				textbox.TextboxReset();
 				textbox.contents             = "Enter file name:";
 				textbox.title                = "Save";
 				textbox.textboxFinishedInput = false;
 			}
 			else Editor::SaveFile(fname, fbuf, alert);
+			break;
+		}
+		case ctrl('w'): {
+			// Save As
+			textbox.TextboxReset();
+			textbox.contents             = "Enter file name:";
+			textbox.title                = "Save";
+			textbox.textboxFinishedInput = false;
+		}
+		case ctrl('o'): {
+			// open
+			textbox.TextboxReset();
+			textbox.contents             = "Enter file name:";
+			textbox.title                = "Open";
+			textbox.textboxFinishedInput = false;
 			break;
 		}
 		case ctrl('q'): {

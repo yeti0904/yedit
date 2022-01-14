@@ -98,7 +98,14 @@ int main(int argc, char** argv) {
 		else {
 			run = textbox.TextboxInput();
 			if (textbox.textboxFinishedInput) {
-				Editor::SaveFile(fname, fbuf, alert);
+				if (textbox.title == "Save") {
+					fname = textbox.textboxInput;
+					Editor::SaveFile(fname, fbuf, alert);
+				}
+				else if (textbox.title == "Open") {
+					fname = textbox.textboxInput;
+					Editor::OpenFile(fname, fbuf, alert);
+				}
 			}
 		}
 		refresh();
