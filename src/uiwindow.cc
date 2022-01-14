@@ -112,7 +112,7 @@ bool UI::Window::TextboxInput() {
 		case ctrl('q'): {
 			return false;
 		}
-		case KEY_ENTER: {
+		case '\n': {
 			textboxFinishedInput = true;
 			break;
 		}
