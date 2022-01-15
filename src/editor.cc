@@ -51,9 +51,9 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	}
 
 	// render editor contents
-	for (size_t i = 0; i < fbuf.size(); ++i) {
-		if (i + scrollY < fbuf.size()) {
-			move(i + 1, 0);
+	for (size_t i = scrollY; i < fbuf.size(); ++i) {
+		//if (i + scrollY < fbuf.size()) {
+			move(i - scrollY + 1, 0);
 			// addstr(fbuf[i + scrollY].c_str());
 			for (size_t j = 0; j <= fbuf[i].length(); ++j) {
 				if ((cury == i) && (curx == j))
@@ -87,7 +87,7 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 					attron(COLOR_PAIR(COLOUR_PAIR_EDITOR));
 				}
 			}
-		}
+		//}
 	}
 
 	attroff(COLOR_PAIR(COLOUR_PAIR_EDITOR));
@@ -229,8 +229,22 @@ void Editor::Input(
 				if (curx > fbuf[cury].size())
 					curx = fbuf[cury].size();
 				// scroll down if the cursor is beyond the viewable area
-				if (cury > scrollY + LINES - 4)
+				if (cury > scrollY + LINES - 3)
 					scrollY = cury - LINES + 4;
+			}
+			break;
+		}
+		case KEY_NPAGE: {
+			if (cury < fbuf.size() - 4) {
+				scrollY += 4;
+				cury    += 4;
+			}
+			break;
+		}
+		case KEY_PPAGE: {
+			if (cury > 4) {
+				scrollY -= 4;
+				cury    -= 4;
 			}
 			break;
 		}
