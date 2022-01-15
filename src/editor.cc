@@ -14,7 +14,7 @@ const string currentTime() {
 	return buf;
 }
 
-void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury) {
+void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury, uint8_t tabSize) {
 	struct sysinfo info;
 	sysinfo(&info);
 
@@ -54,7 +54,21 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	for (size_t i = 0; i < fbuf.size(); ++i) {
 		if (i + scrollY < fbuf.size()) {
 			move(i + 1, 0);
-			addstr(fbuf[i + scrollY].c_str());
+			// addstr(fbuf[i + scrollY].c_str());
+			for (size_t j = 0; j<fbuf[i].length(); ++j) {
+				switch (fbuf[i][j]) {
+					case '\t': {
+						for (size_t k = 0; k < tabSize; ++k) {
+							addch(' ');
+						}
+						break;
+					}
+					default: {
+						addch(fbuf[i][j]);
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -63,7 +77,7 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	// render cursor
 	attron(COLOR_PAIR(COLOUR_PAIR_CURSOR));
 	move(cury + 1 + scrollY, curx);
-	if (curx >= fbuf[cury].length())
+	if ((curx >= fbuf[cury].length()) || (fbuf[cury][curx] == '\t'))
 		addch(' ');
 	else
 		addch(fbuf[cury][curx]);
@@ -168,8 +182,11 @@ void Editor::Input(
 				--cury;
 				if (curx > fbuf[cury].size())
 					curx = fbuf[cury].size();
-				if (scrollY > 0)
-					-- scrollY;
+				/*if (scrollY > 0)
+					-- scrollY;*/
+				// scroll up if the cursor is above the viewable area
+				if (cury < scrollY)
+					scrollY = cury;
 			}
 			break;
 		}
@@ -178,8 +195,9 @@ void Editor::Input(
 				++cury;
 				if (curx > fbuf[cury].size())
 					curx = fbuf[cury].size();
-				if (cury - scrollY > LINES - 3)
-					++ scrollY;
+				// scroll down if the cursor is beyond the viewable area
+				if (cury > scrollY + LINES - 4)
+					scrollY = cury - LINES + 4;
 			}
 			break;
 		}

@@ -4,7 +4,7 @@
 #include "uiwindow.hh"
 
 namespace Editor {
-	void Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury);
+	void Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury, uint8_t tabSize);
 	void SaveFile(string& fname, vector <string>& fbuf, UI::Alert& alert);
 	void OpenFile(string& fname, vector <string>& fbuf, UI::Alert& alert);
 	void Backspace(vector <string>& fbuf, size_t& curx, size_t& cury);

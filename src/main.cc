@@ -26,6 +26,7 @@
 #include "uiwindow.hh"
 #include "colourpairs.hh"
 #include "alert.hh"
+#include "settings.hh"
 
 int main(int argc, char** argv) {
 	vector <string> args;
@@ -38,6 +39,9 @@ int main(int argc, char** argv) {
 	size_t         	curx        = 0;
 	size_t          scrollY     = 0;
 	bool            run         = true;
+
+	Editor::Settings editorSettings;
+	editorSettings.tabSize = 4;
 
 	for (size_t i = 0; i<argc; ++i) {
 		args.push_back(argv[i]);
@@ -80,7 +84,7 @@ int main(int argc, char** argv) {
 	textbox.textboxFinishedInput = true;
 
 	while (run) {
-		Editor::Render("fn: " + fname, fbuf, scrollY, curx, cury);
+		Editor::Render("fn: " + fname, fbuf, scrollY, curx, cury, editorSettings.tabSize);
 		if (alert.time > 0) {
 			alert.DoTime();
 			alert.Render();
