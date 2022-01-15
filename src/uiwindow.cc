@@ -5,6 +5,7 @@ UI::Window::Window() {
 	colour_pair = COLOUR_PAIR_BAR;
 	title = "Untitled window";
 	textboxColour = COLOUR_PAIR_EDITOR;
+	isTextbox = false;
 }
 
 void UI::Window::Render() {

@@ -21,6 +21,7 @@ namespace UI {
 			// textbox stuff
 			string textboxInput;
 			size_t textboxCurx;
+			size_t textboxScroll;
 			bool   textboxFinishedInput;
 			void   TextboxReset();
 			bool   TextboxInput();

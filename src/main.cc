@@ -27,6 +27,7 @@
 #include "colourpairs.hh"
 #include "alert.hh"
 #include "settings.hh"
+#include "constants.hh"
 
 int main(int argc, char** argv) {
 	vector <string> args;
@@ -40,11 +41,40 @@ int main(int argc, char** argv) {
 	size_t          scrollY     = 0;
 	bool            run         = true;
 
+	UI::Alert alert;
+
 	Editor::Settings editorSettings;
 	editorSettings.tabSize = 4;
 
 	for (size_t i = 0; i<argc; ++i) {
 		args.push_back(argv[i]);
+	}
+
+	if (args.size() >= 1) for (size_t i = 1; i<args.size(); ++i) {
+		switch (args[i][0]) {
+			case '-': {
+				if ((args[i] == "-v") || (args[i] == "--version")) {
+					puts(APP_NAME);
+					return 0;
+				}
+				if ((args[i] == "-h") || (args[i] == "--help")) {
+					puts(
+						"Usage:\n"
+						"yedit [filename] [options]\n\n"
+						"Options:\n"
+						"-v / --version : Print version\n"
+						"-h / --help    : Print help"
+					);
+					return 0;
+				}
+				break;
+			}
+			default: {
+				fname = args[i];
+				Editor::OpenFile(fname, fbuf, alert);
+				break;
+			}
+		}
 	}
 
 	IOHandle::Init();
@@ -70,8 +100,6 @@ int main(int argc, char** argv) {
 	"\n"
 	"You should have received a copy of the GNU General Public License\n"
 	"along with this program.  If not, see <https://www.gnu.org/licenses/>.\n";
-
-	UI::Alert alert;
 
 	UI::Window textbox;
 	textbox.isTextbox    = true;
@@ -109,6 +137,19 @@ int main(int argc, char** argv) {
 				else if (textbox.title == "Open") {
 					fname = textbox.textboxInput;
 					Editor::OpenFile(fname, fbuf, alert);
+					curx = 0;
+					cury = 0;
+					scrollY = 0;
+				}
+				else if (textbox.title == "Find") {
+					for (size_t i = 0; i < fbuf.size(); ++i) {
+						if (fbuf[i].find(textbox.textboxInput) != string::npos) {
+							cury = i;
+							curx = fbuf[i].find(textbox.textboxInput);
+							scrollY = 0;
+							break;
+						}
+					}
 				}
 			}
 		}

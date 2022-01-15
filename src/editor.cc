@@ -282,6 +282,13 @@ void Editor::Input(
 			Terminal::Run();
 			break;
 		}
+		case ctrl('f'): {
+			textbox.TextboxReset();
+			textbox.contents             = "String to find:";
+			textbox.title                = "Find";
+			textbox.textboxFinishedInput = false;
+			break;
+		}
 		case '\n': {
 			Editor::Newline(fbuf, curx, cury);
 			break;
