@@ -296,7 +296,7 @@ void Editor::Input(
 			if (((input >= ' ') && (input <= '~')) || (input == '\t')) {
 				++ curx;
 				if (curx >= fbuf[cury].size()) fbuf[cury] += input;
-				else fbuf[cury].insert(curx, 1, input);
+				else fbuf[cury].insert(curx - 1, 1, input);
 			}
 			break;
 		}
