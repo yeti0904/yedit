@@ -21,3 +21,4 @@ this part of the UI shows you the filename/path of the currently open file<br><b
 | Ctrl + O | Open                |
 | Ctrl + T | Suspend to terminal |
 | Ctrl + Q | Quit                |
+| Ctrl + F | Find                |
