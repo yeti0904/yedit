@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
 	textbox.textboxFinishedInput = true;
 
 	while (run) {
-		Editor::Render("fn: " + fname, fbuf, scrollY, curx, cury, editorSettings.tabSize);
+		Editor::Render("fn: " + fname + " | lines: " + to_string(fbuf.size()), fbuf, scrollY, curx, cury, editorSettings);
 		if (alert.time > 0) {
 			alert.DoTime();
 			alert.Render();
@@ -149,6 +149,17 @@ int main(int argc, char** argv) {
 							scrollY = cury;
 							break;
 						}
+					}
+				}
+				else if (textbox.title == "Command") {
+					if (textbox.textboxInput == "toggle render null") {
+						editorSettings.debugNull = !editorSettings.debugNull;
+						alert.time               = 3000;
+						alert.text               = string("null render set to ") + (editorSettings.debugNull ? "on" : "off");
+					}
+					else {
+						alert.time = 3000;
+						alert.text = "Unknown command";
 					}
 				}
 			}

@@ -14,7 +14,7 @@ const string currentTime() {
 	return buf;
 }
 
-void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury, uint8_t tabSize) {
+void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury, Editor::Settings settings) {
 	struct sysinfo info;
 	sysinfo(&info);
 
@@ -64,20 +64,20 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 							addch(' ');
 							attroff(COLOR_PAIR(COLOUR_PAIR_CURSOR));
 							attron(COLOR_PAIR(COLOUR_PAIR_EDITOR));
-							for (size_t k = 0; k < tabSize - 1; ++k) {
+							for (size_t k = 0; k < settings.tabSize - 1; ++k) {
 								addch(' ');
 							}
 						}
 						else
-							for (size_t k = 0; k < tabSize; ++k) {
+							for (size_t k = 0; k < settings.tabSize; ++k) {
 								addch(' ');
 							}
 						break;
 					}
 					default: {
-						if (fbuf[i][j] == '\0')
+						if ((fbuf[i][j] == '\0') && !settings.debugNull)
 							addch(' ');
-						else
+						else if (fbuf[i][j] != '\r')
 							addch(fbuf[i][j]);
 						break;
 					}
@@ -286,6 +286,13 @@ void Editor::Input(
 			textbox.TextboxReset();
 			textbox.contents             = "String to find:";
 			textbox.title                = "Find";
+			textbox.textboxFinishedInput = false;
+			break;
+		}
+		case ctrl('e'): {
+			textbox.TextboxReset();
+			textbox.contents             = "";
+			textbox.title                = "Command";
 			textbox.textboxFinishedInput = false;
 			break;
 		}
