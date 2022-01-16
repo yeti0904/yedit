@@ -22,3 +22,10 @@ this part of the UI shows you the filename/path of the currently open file<br><b
 | Ctrl + T | Suspend to terminal |
 | Ctrl + Q | Quit                |
 | Ctrl + F | Find                |
+| Ctrl + E | Run command         |
+
+## Commands
+right now commands are only for debug, but here's a list
+| Command              | What it does                      |
+| -------------------- | --------------------------------- |
+| toggle render null   | renders null terminators as ^@    |
