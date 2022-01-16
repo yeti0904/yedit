@@ -12,6 +12,10 @@ run bin/yedit
 this part of the UI shows you the time<br><br>
 <img src="pic/filename.png">
 this part of the UI shows you the filename/path of the currently open file<br><br>
+<img src="pic/yeditcurp.png">
+this part of the UI shows you the position of your cursor<br><br>
+<img src="pic/yeditlines.png">
+this part of the UI shows you how many lines are in the currently opened file<br><br>
 
 ## Keys
 | Key      | Actions             |
