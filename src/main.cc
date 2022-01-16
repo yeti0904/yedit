@@ -28,6 +28,7 @@
 #include "alert.hh"
 #include "settings.hh"
 #include "constants.hh"
+#include "file.hh"
 
 int main(int argc, char** argv) {
 	vector <string> args;
@@ -57,7 +58,7 @@ int main(int argc, char** argv) {
 					puts(APP_NAME);
 					return 0;
 				}
-				if ((args[i] == "-h") || (args[i] == "--help")) {
+				else if ((args[i] == "-h") || (args[i] == "--help")) {
 					puts(
 						"Usage:\n"
 						"yedit [filename] [options]\n\n"
@@ -66,6 +67,9 @@ int main(int argc, char** argv) {
 						"-h / --help    : Print help"
 					);
 					return 0;
+				}
+				else if (args[i] == "--set-up") {
+					printf("%s set up started\n", APP_NAME);
 				}
 				break;
 			}
@@ -112,7 +116,9 @@ int main(int argc, char** argv) {
 	textbox.textboxFinishedInput = true;
 
 	while (run) {
-		Editor::Render("fn: " + fname + " | lines: " + to_string(fbuf.size()), fbuf, scrollY, curx, cury, editorSettings);
+		Editor::Render(
+			"fn: " + fname + " | lines: " + to_string(fbuf.size()) + " | (" + to_string(curx) + ":" + to_string(cury) + ")"
+		, fbuf, scrollY, curx, cury, editorSettings);
 		if (alert.time > 0) {
 			alert.DoTime();
 			alert.Render();

@@ -171,7 +171,7 @@ void Editor::Backspace(vector <string>& fbuf, size_t& curx, size_t& cury) {
 	}
 }
 
-void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury) {
+void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury, size_t& scrollY) {
 	// insert if not at end of line
 	if (curx < fbuf[cury].size()) {
 		fbuf.insert(fbuf.begin() + cury + 1, fbuf[cury].substr(curx));
@@ -183,6 +183,10 @@ void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury) {
 	}
 	curx = 0;
 	++ cury;
+	// scroll down if needed
+	if (cury >= (LINES - 2)) {
+		++ scrollY;
+	}
 }
 
 void Editor::Input(
@@ -297,7 +301,7 @@ void Editor::Input(
 			break;
 		}
 		case '\n': {
-			Editor::Newline(fbuf, curx, cury);
+			Editor::Newline(fbuf, curx, cury, scrollY);
 			break;
 		}
 		case ' ': {
