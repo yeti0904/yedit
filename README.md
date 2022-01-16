@@ -1,5 +1,5 @@
 # yedit
-that's right! i'm rewriting yedit again! (i've done this 14 times now i don't know when to stop)
+usable text editor
 
 ## compiling
 `make`
