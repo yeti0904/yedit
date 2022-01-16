@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
 						if (fbuf[i].find(textbox.textboxInput) != string::npos) {
 							cury = i;
 							curx = fbuf[i].find(textbox.textboxInput);
-							scrollY = 0;
+							scrollY = cury;
 							break;
 						}
 					}
