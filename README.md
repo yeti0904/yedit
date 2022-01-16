@@ -23,6 +23,8 @@ this part of the UI shows you the filename/path of the currently open file<br><b
 | Ctrl + Q | Quit                |
 | Ctrl + F | Find                |
 | Ctrl + E | Run command         |
+| Pg Dn    | Scroll down 4 lines |
+| Pg Up    | Scroll up 4 lines   |
 
 ## Commands
 right now commands are only for debug, but here's a list
