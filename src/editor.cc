@@ -245,6 +245,9 @@ void Editor::Input(
 				if (cury < scrollY)
 					scrollY = cury;
 			}
+			else {
+				curx = 0;
+			}
 			break;
 		}
 		case KEY_DOWN: {
@@ -255,6 +258,9 @@ void Editor::Input(
 				// scroll down if the cursor is beyond the viewable area
 				if (cury > scrollY + LINES - 3)
 					scrollY = cury - LINES + 4;
+			}
+			else {
+				cury = fbuf.size() - 1;
 			}
 			break;
 		}
