@@ -1,6 +1,6 @@
 CC  = g++
 src = $(wildcard src/*.cc)
-arg = -std=c++17 -lncurses
+arg = -std=c++17 -lncurses -lpthread -I./lib
 out = bin/yedit
 
 build:
