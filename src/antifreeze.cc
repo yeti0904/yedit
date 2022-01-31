@@ -20,9 +20,14 @@ void antifreeze(uint16_t& freezetime, UI::Window& textbox, bool& run) {
 				clear();
 				freezewin.Render();
 				refresh();
+				if (getch() == 'q') {
+					IOHandle::Exit();
+					exit(1);
+				}
 				usleep(1000000/60);
 			}
 		}
-		usleep(25000);
+		freezetime += 1000/25;
+		usleep(1000000/25);
 	}
 }
