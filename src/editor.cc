@@ -50,15 +50,18 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 		mvhline(i, 0, ' ', COLS);
 	}
 
+	// editor contents variables
+	size_t lines = fbuf.size();
+
 	// render editor contents
 	for (size_t i = scrollY; i < fbuf.size(); ++i) {
 		//if (i + scrollY < fbuf.size()) {
 			if (settings.lineNumbers) {
 				move(i - scrollY + 1, 0);
 				addstr(to_string(i + 1).c_str());
-				move(i - scrollY + 1, to_string(fbuf.size() + 1).length());
+				move(i - scrollY + 1, to_string(lines + 1).length());
 				addch(ACS_VLINE);
-				move(i - scrollY + 1, to_string(fbuf.size() + 1).length() + 2);
+				move(i - scrollY + 1, to_string(lines + 1).length() + 2);
 			}
 			else
 				move(i - scrollY + 1, 0);
@@ -199,7 +202,7 @@ void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury, size_t& 
 void Editor::Input(
 	vector <string>& fbuf, size_t& curx, size_t& cury, UI::Alert& alert, UI::Window& notice, 
 	bool& run, bool& noticeShown, size_t& scrollY, string& fname, UI::Window& textbox,
-	Properties& theme
+	Properties& theme, string& clipboard
 ) {
 	uint16_t input = getch();
 	switch (input) {
@@ -315,6 +318,28 @@ void Editor::Input(
 			textbox.contents             = "";
 			textbox.title                = "Command";
 			textbox.textboxFinishedInput = false;
+			break;
+		}
+		case ctrl('k'): {
+			// cut line
+			clipboard = fbuf[cury];
+			fbuf[cury] = "";
+			alert.text = "Cut line";
+			alert.time = 3000;
+			break;
+		}
+		case ctrl('l'): {
+			// copy line
+			clipboard = fbuf[cury];
+			alert.text = "Copied line";
+			alert.time = 3000;
+			break;
+		}
+		case ctrl('u'): {
+			// paste
+			fbuf[cury].insert(curx, clipboard);
+			alert.text = "Pasted";
+			alert.time = 3000;
 			break;
 		}
 		case '\n': {

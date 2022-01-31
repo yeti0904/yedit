@@ -92,6 +92,7 @@ void UI::Window::TextboxReset() {
 bool UI::Window::TextboxInput() {
 	uint16_t input = getch();
 	switch (input) {
+		case 127:
 		case KEY_BACKSPACE: {
 			if (textboxInput.length() > 0) {
 				textboxInput.erase(textboxCurx - 1, 1);

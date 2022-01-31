@@ -44,6 +44,7 @@ int main(int argc, char** argv) {
 	size_t          scrollY     = 0;
 	bool            run         = true;
 	uint16_t        freezetime  = 0;
+	string          clipboard   = "";
 
 	if (!File::DirExists(string(getenv("HOME")) + "/.config/yedit8")) {
 		File::CreateDirectory(string(getenv("HOME")) + "/.config/yedit8");
@@ -180,7 +181,8 @@ int main(int argc, char** argv) {
 		}
 		freezetime = 0;
 		if (textbox.textboxFinishedInput) {
-			Editor::Input(fbuf, curx, cury, alert, notice, run, noticeShown, scrollY, fname, textbox, theme);
+			Editor::Input(fbuf, curx, cury, alert, notice, run, noticeShown, scrollY, fname, textbox, theme,
+				clipboard);
 		}
 		else {
 			run = textbox.TextboxInput();
