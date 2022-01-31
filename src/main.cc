@@ -50,7 +50,8 @@ int main(int argc, char** argv) {
 		File::Write(string(getenv("HOME")) + "/.config/yedit8/settings.properties",
 			"# yedit settings file\n\n"
 			"# tab size (default: 4)\n"
-			"tabsize = 4\n\n"
+			"tabsize = 4\n"
+			"linenumbers = false\n"
 			"# theme (default: retro)\n"
 			"# themes are located in the themes folder\n"
 			"theme = retro\n"
@@ -120,7 +121,8 @@ int main(int argc, char** argv) {
 
 	Properties props;
 	props.read(File::Read(string(getenv("HOME")) + "/.config/yedit8/settings.properties"));
-	editorSettings.tabSize = stoi(props["tabsize"]);
+	editorSettings.tabSize     = stoi(props["tabsize"]);
+	editorSettings.lineNumbers = (props["linenumbers"] == "true");
 
 	Properties theme;
 	theme.read(File::Read(string(getenv("HOME")) + "/.config/yedit8/themes/" + props["theme"] + ".properties"));

@@ -53,7 +53,15 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	// render editor contents
 	for (size_t i = scrollY; i < fbuf.size(); ++i) {
 		//if (i + scrollY < fbuf.size()) {
-			move(i - scrollY + 1, 0);
+			if (settings.lineNumbers) {
+				move(i - scrollY + 1, 0);
+				addstr(to_string(i + 1).c_str());
+				move(i - scrollY + 1, to_string(fbuf.size() + 1).length());
+				addch(ACS_VLINE);
+				move(i - scrollY + 1, to_string(fbuf.size() + 1).length() + 2);
+			}
+			else
+				move(i - scrollY + 1, 0);
 			// addstr(fbuf[i + scrollY].c_str());
 			for (size_t j = 0; j <= fbuf[i].length(); ++j) {
 				if ((cury == i) && (curx == j))

@@ -4,14 +4,12 @@
 namespace Editor {
 	struct Settings {
 		Settings() {
-			tabSize   = 4;
-			debugNull = false;
+			tabSize     = 4;
+			debugNull   = false;
+			lineNumbers = false;
 		}
 		uint8_t tabSize;
 		bool    debugNull;
-
-		// colours
-		uint8_t editorFore;
-		uint8_t editorBack;
+		bool    lineNumbers;
 	};
 }
