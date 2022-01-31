@@ -35,3 +35,49 @@ right now commands are only for debug, but here's a list
 | Command              | What it does                      |
 | -------------------- | --------------------------------- |
 | toggle render null   | renders null terminators as ^@    |
+
+## Config
+the default yedit config looks like this: 
+```properties
+# yedit settings file
+
+# tab size (default: 4)
+tabsize = 4
+
+# theme (default: retro)
+# themes are located in the themes folder
+theme = bubblegum
+```
+tabSize is the amount of spaces used to render a tab<br>
+theme is what theme you can use
+### themes
+here is what the retro theme config looks like:
+```properties
+editorBG = blue
+editorFG = white
+barBG    = white
+barFG    = black
+timeBG   = green
+timeFG   = black
+```
+BG is background and FG is foreground
+#### colours
+here is a list of colours:
+```
+black
+red
+yellow
+green
+blue
+magenta
+cyan
+white
+grey
+lightred
+lightgreen
+lightyellow
+lightblue
+lightmagenta
+lightcyan
+lightwhite
+```
