@@ -27,6 +27,10 @@ this part of the UI shows you how many lines are in the currently opened file<br
 | Ctrl + Q | Quit                |
 | Ctrl + F | Find                |
 | Ctrl + E | Run command         |
+| Ctrl + K | Cut line            |
+| Ctrl + L | Copy line           |
+| Ctrl + U | Paste               |
+| Ctrl + N | New file
 | Pg Dn    | Scroll down 4 lines |
 | Pg Up    | Scroll up 4 lines   |
 
@@ -43,12 +47,13 @@ the default yedit config looks like this:
 
 # tab size (default: 4)
 tabsize = 4
-
+linenumbers = true
 # theme (default: retro)
 # themes are located in the themes folder
-theme = bubblegum
+theme = retro
 ```
-tabSize is the amount of spaces used to render a tab<br>
+tabsize is the amount of spaces used to render a tab<br>
+linenumbers is a property that renders the line number before each line on the open file<br>
 theme is what theme you can use
 ### themes
 here is what the retro theme config looks like:
