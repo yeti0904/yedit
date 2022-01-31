@@ -342,6 +342,15 @@ void Editor::Input(
 			alert.time = 3000;
 			break;
 		}
+		case ctrl('n'): {
+			fbuf = {""};
+			cury = 0;
+			curx = 0;
+			scrollY = 0;
+			alert.text = "New file";
+			alert.time = 3000;
+			break;
+		}
 		case '\n': {
 			Editor::Newline(fbuf, curx, cury, scrollY);
 			break;
