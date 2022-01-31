@@ -1,3 +1,3 @@
 #pragma once
 
-#define APP_NAME "yedit b8.0"
+#define APP_NAME "yedit b8.1"
