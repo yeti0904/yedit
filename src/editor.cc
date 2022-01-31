@@ -330,6 +330,7 @@ void Editor::Input(
 			// cut line
 			clipboard = fbuf[cury];
 			fbuf[cury] = "";
+			curx       = 0;
 			alert.text = "Cut line";
 			alert.time = 3000;
 			break;
