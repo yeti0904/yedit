@@ -12,14 +12,22 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <thread>
+#include <functional>
+using std::ref;
+using std::stoi;
 using std::string;
 using std::vector;
+using std::thread;
 using std::ofstream;
 using std::ifstream;
 using std::to_string;
 
 // C libraries
 #include <ncurses.h>
+
+// C++ libraries
+#include <dotproperties.hh>
 
 // macros
 #define ctrl(x)    ((x) & 0x1f)

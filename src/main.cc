@@ -29,6 +29,8 @@
 #include "settings.hh"
 #include "constants.hh"
 #include "file.hh"
+#include "antifreeze.hh"
+#include "file.hh"
 
 int main(int argc, char** argv) {
 	vector <string> args;
@@ -41,6 +43,44 @@ int main(int argc, char** argv) {
 	size_t         	curx        = 0;
 	size_t          scrollY     = 0;
 	bool            run         = true;
+	uint16_t        freezetime  = 0;
+
+	if (!File::DirExists(string(getenv("HOME")) + "/.config/yedit8")) {
+		File::CreateDirectory(string(getenv("HOME")) + "/.config/yedit8");
+		File::Write(string(getenv("HOME")) + "/.config/yedit8/settings.properties",
+			"# yedit settings file\n\n"
+			"# tab size (default: 4)\n"
+			"tabsize = 4\n\n"
+			"# theme (default: retro)\n"
+			"# themes are located in the themes folder\n"
+			"theme = retro\n"
+		);
+		File::CreateDirectory(string(getenv("HOME")) + "/.config/yedit8/themes");
+		File::Write(string(getenv("HOME")) + "/.config/yedit8/themes/retro.properties",
+			"editorBG = blue\n"
+			"editorFG = white\n"
+			"barBG    = white\n"
+			"barFG    = black\n"
+			"timeBG   = green\n"
+			"timeFG   = black\n"
+		);
+		File::Write(string(getenv("HOME")) + "/.config/yedit8/themes/bubblegum.properties",
+			"editorBG = lightmagenta\n"
+			"editorFG = white\n"
+			"barBG    = magenta\n"
+			"barFG    = white\n"
+			"timeBG   = magenta\n"
+			"timeFG   = white\n"
+		);
+		File::Write(string(getenv("HOME")) + "/.config/yedit8/themes/monochrome.properties",
+			"editorBG = black\n"
+			"editorFG = white\n"
+			"barBG    = white\n"
+			"barFG    = black\n"
+			"timeBG   = white\n"
+			"timeFG   = black\n"
+		);
+	}
 
 	UI::Alert alert;
 
@@ -68,9 +108,6 @@ int main(int argc, char** argv) {
 					);
 					return 0;
 				}
-				else if (args[i] == "--set-up") {
-					printf("%s set up started\n", APP_NAME);
-				}
 				break;
 			}
 			default: {
@@ -81,7 +118,14 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	IOHandle::Init();
+	Properties props;
+	props.read(File::Read(string(getenv("HOME")) + "/.config/yedit8/settings.properties"));
+	editorSettings.tabSize = stoi(props["tabsize"]);
+
+	Properties theme;
+	theme.read(File::Read(string(getenv("HOME")) + "/.config/yedit8/themes/" + props["theme"] + ".properties"));
+
+	IOHandle::Init(theme);
 
 	UI::Window notice;
 	notice.x = 2;
@@ -115,6 +159,8 @@ int main(int argc, char** argv) {
 	textbox.TextboxReset();
 	textbox.textboxFinishedInput = true;
 
+	thread antifreezeThread(antifreeze, ref(freezetime), ref(textbox), ref(run));
+
 	while (run) {
 		Editor::Render(
 			"fn: " + fname + " | lines: " + to_string(fbuf.size()) + " | (" + to_string(curx) + ":" + to_string(cury) + ")"
@@ -130,8 +176,9 @@ int main(int argc, char** argv) {
 			textbox.x = COLS / 2 - 15;
 			textbox.y  = LINES / 2 - 3;
 		}
+		freezetime = 0;
 		if (textbox.textboxFinishedInput) {
-			Editor::Input(fbuf, curx, cury, alert, notice, run, noticeShown, scrollY, fname, textbox);
+			Editor::Input(fbuf, curx, cury, alert, notice, run, noticeShown, scrollY, fname, textbox, theme);
 		}
 		else {
 			run = textbox.TextboxInput();
@@ -174,6 +221,7 @@ int main(int argc, char** argv) {
 		usleep(1000000 / 60); // 60fps
 	}
 	IOHandle::Exit();
+	antifreezeThread.join();
 
 	return 0;
 }

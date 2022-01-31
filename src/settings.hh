@@ -9,5 +9,9 @@ namespace Editor {
 		}
 		uint8_t tabSize;
 		bool    debugNull;
+
+		// colours
+		uint8_t editorFore;
+		uint8_t editorBack;
 	};
 }

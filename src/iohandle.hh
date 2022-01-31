@@ -3,6 +3,6 @@
 
 namespace IOHandle {
 	void SetTermTitle(const string& title);
-	void Init();
+	void Init(Properties theme);
 	void Exit();
 };

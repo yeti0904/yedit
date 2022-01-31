@@ -2,7 +2,7 @@
 #include "_components.hh"
 #include "iohandle.hh"
 
-void Terminal::Run() {
+void Terminal::Run(Properties theme) {
 	IOHandle::Exit();
 	printf("\e[2J \e[1;1f");
 	printf("yedit has been suspended to the terminal\ntype \"exit\" to return to yedit\n");
@@ -19,5 +19,5 @@ void Terminal::Run() {
 		pid = wait(&status);
 	}
 
-	IOHandle::Init();
+	IOHandle::Init(theme);
 }

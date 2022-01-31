@@ -57,7 +57,7 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 			// addstr(fbuf[i + scrollY].c_str());
 			for (size_t j = 0; j <= fbuf[i].length(); ++j) {
 				if ((cury == i) && (curx == j))
-					attron(COLOR_PAIR(COLOUR_PAIR_CURSOR));
+					attron(A_REVERSE);
 				switch (fbuf[i][j]) {
 					case '\t': {
 						if ((cury == i) && (curx == j)) {
@@ -83,8 +83,7 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 					}
 				}
 				if ((cury == i) && (curx == j)) {
-					attroff(COLOR_PAIR(COLOUR_PAIR_CURSOR));
-					attron(COLOR_PAIR(COLOUR_PAIR_EDITOR));
+					attroff(A_REVERSE);
 				}
 			}
 		//}
@@ -191,7 +190,8 @@ void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury, size_t& 
 
 void Editor::Input(
 	vector <string>& fbuf, size_t& curx, size_t& cury, UI::Alert& alert, UI::Window& notice, 
-	bool& run, bool& noticeShown, size_t& scrollY, string& fname, UI::Window& textbox
+	bool& run, bool& noticeShown, size_t& scrollY, string& fname, UI::Window& textbox,
+	Properties& theme
 ) {
 	uint16_t input = getch();
 	switch (input) {
@@ -200,6 +200,7 @@ void Editor::Input(
 			notice.h = LINES - 4;
 			break;
 		}
+		case 127:
 		case KEY_BACKSPACE: {
 			Editor::Backspace(fbuf, curx, cury);
 			break;
@@ -207,11 +208,19 @@ void Editor::Input(
 		case KEY_LEFT: {
 			if (curx > 0)
 				--curx;
+			else if (cury > 0) {
+				--cury;
+				curx = fbuf[cury].size();
+			}
 			break;
 		}
 		case KEY_RIGHT: {
 			if (curx < fbuf[cury].size())
 				++curx;
+			else if (cury < fbuf.size() - 1) {
+				++cury;
+				curx = 0;
+			}
 			break;
 		}
 		case KEY_UP: {
@@ -283,7 +292,7 @@ void Editor::Input(
 			break;
 		}
 		case ctrl('t'): {
-			Terminal::Run();
+			Terminal::Run(theme);
 			break;
 		}
 		case ctrl('f'): {
