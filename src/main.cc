@@ -31,6 +31,7 @@
 #include "file.hh"
 #include "antifreeze.hh"
 #include "file.hh"
+#include "vec2.hh"
 
 int main(int argc, char** argv) {
 	vector <string> args;
@@ -130,6 +131,9 @@ int main(int argc, char** argv) {
 
 	IOHandle::Init(theme);
 
+	vec2 mark    = {0, 0};
+	bool markSet = false;
+
 	UI::Window notice;
 	notice.x = 2;
 	notice.y = 2;
@@ -162,6 +166,8 @@ int main(int argc, char** argv) {
 	textbox.TextboxReset();
 	textbox.textboxFinishedInput = true;
 
+	
+
 	thread antifreezeThread(antifreeze, ref(freezetime), ref(textbox), ref(run));
 
 	while (run) {
@@ -182,7 +188,7 @@ int main(int argc, char** argv) {
 		freezetime = 0;
 		if (textbox.textboxFinishedInput) {
 			Editor::Input(fbuf, curx, cury, alert, notice, run, noticeShown, scrollY, fname, textbox, theme,
-				clipboard);
+				clipboard, props, editorSettings);
 		}
 		else {
 			run = textbox.TextboxInput();
@@ -193,6 +199,9 @@ int main(int argc, char** argv) {
 				}
 				else if (textbox.title == "Open") {
 					fname = textbox.textboxInput;
+					if (fname == "$yeditconfig") {
+						fname = string(getenv("HOME")) + "/.config/yedit8/settings.properties";
+					}
 					Editor::OpenFile(fname, fbuf, alert);
 					curx = 0;
 					cury = 0;

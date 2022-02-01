@@ -4,6 +4,8 @@
 #include "colourpairs.hh"
 #include "iohandle.hh"
 #include "terminal.hh"
+#include "settings.hh"
+#include "file.hh"
 
 const string currentTime() {
 	time_t     now = time(0);
@@ -73,11 +75,11 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 					case '\t': {
 						if ((cury == i) && (curx == j)) {
 							addch(' ');
-							attroff(COLOR_PAIR(COLOUR_PAIR_CURSOR));
-							attron(COLOR_PAIR(COLOUR_PAIR_EDITOR));
+							attron(A_REVERSE);
 							for (size_t k = 0; k < settings.tabSize - 1; ++k) {
 								addch(' ');
 							}
+							attroff(A_REVERSE);
 						}
 						else
 							for (size_t k = 0; k < settings.tabSize; ++k) {
@@ -202,7 +204,7 @@ void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury, size_t& 
 void Editor::Input(
 	vector <string>& fbuf, size_t& curx, size_t& cury, UI::Alert& alert, UI::Window& notice, 
 	bool& run, bool& noticeShown, size_t& scrollY, string& fname, UI::Window& textbox,
-	Properties& theme, string& clipboard
+	Properties& theme, string& clipboard, Properties& settings, Editor::Settings& editorSettings
 ) {
 	uint16_t input = getch();
 	switch (input) {
@@ -345,8 +347,9 @@ void Editor::Input(
 		case ctrl('u'): {
 			// paste
 			fbuf[cury].insert(curx, clipboard);
-			alert.text = "Pasted";
-			alert.time = 3000;
+			curx       += clipboard.length();
+			alert.text =  "Pasted";
+			alert.time =  3000;
 			break;
 		}
 		case ctrl('n'): {
@@ -356,6 +359,25 @@ void Editor::Input(
 			scrollY = 0;
 			alert.text = "New file";
 			alert.time = 3000;
+			break;
+		}
+		case ctrl('r'): {
+			// refresh settings
+
+			// clear all loaded settings
+			settings.clear();
+			theme.clear();
+
+			// load new settings
+			settings.read(File::Read(string(getenv("HOME")) + "/.config/yedit8/settings.properties"));
+			editorSettings.tabSize     = stoi(settings["tabsize"]);
+			editorSettings.lineNumbers = (settings["linenumbers"] == "true");
+			theme.read(File::Read(string(getenv("HOME")) + "/.config/yedit8/themes/" + settings["theme"] + ".properties"));
+
+			// restart yedit
+			IOHandle::Exit();
+			IOHandle::Init(theme);
+
 			break;
 		}
 		case '\n': {
