@@ -378,6 +378,10 @@ void Editor::Input(
 			IOHandle::Exit();
 			IOHandle::Init(theme);
 
+			// set alert
+			alert.text = "Reloaded yedit";
+			alert.time = 3000;
+
 			break;
 		}
 		case '\n': {
