@@ -30,8 +30,8 @@
 #include "constants.hh"
 #include "file.hh"
 #include "antifreeze.hh"
-#include "file.hh"
 #include "vec2.hh"
+#include "util.hh"
 
 int main(int argc, char** argv) {
 	vector <string> args;
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 			"# yedit settings file\n\n"
 			"# tab size (default: 4)\n"
 			"tabsize = 4\n"
-			"linenumbers = false\n"
+			"linenumbers = false\n\n"
 			"# theme (default: retro)\n"
 			"# themes are located in the themes folder\n"
 			"theme = retro\n"
@@ -82,6 +82,30 @@ int main(int argc, char** argv) {
 			"barFG    = black\n"
 			"timeBG   = white\n"
 			"timeFG   = black\n"
+		);
+		File::Write(string(getenv("HOME")) + "/.config/yedit8/themes/dark.properties",
+			"editorBG = black\n"
+			"editorFG = white\n"
+			"barBG    = cyan\n"
+			"barFG    = black\n"
+			"timeBG   = cyan\n"
+			"timeFG   = black\n"
+		);
+		File::Write(string(getenv("HOME")) + "/.config/yedit8/themes/light.properties",
+			"editorBG = white\n"
+			"editorFG = black\n"
+			"barBG    = cyan\n"
+			"barFG    = black\n"
+			"timeBG   = cyan\n"
+			"timeFG   = black\n"
+		);
+		File::Write(string(getenv("HOME")) + "/.config/yedit8/themes/mono-light.properties",
+			"editorBG = white\n"
+			"editorFG = black\n"
+			"barBG    = black\n"
+			"barFG    = white\n"
+			"timeBG   = black\n"
+			"timeFG   = white\n"
 		);
 	}
 
@@ -166,6 +190,13 @@ int main(int argc, char** argv) {
 	textbox.TextboxReset();
 	textbox.textboxFinishedInput = true;
 
+	UI::Window selection;
+	selection.isSelection = true;
+	selection.x = COLS / 2 - 15;
+	selection.y = LINES / 2 - 5;
+	selection.w = 30;
+	selection.h = 10;
+	selection.selectionFinishedInput = true;
 	
 
 	thread antifreezeThread(antifreeze, ref(freezetime), ref(textbox), ref(run));
@@ -185,12 +216,17 @@ int main(int argc, char** argv) {
 			textbox.x = COLS / 2 - 15;
 			textbox.y  = LINES / 2 - 3;
 		}
-		freezetime = 0;
-		if (textbox.textboxFinishedInput) {
-			Editor::Input(fbuf, curx, cury, alert, notice, run, noticeShown, scrollY, fname, textbox, theme,
-				clipboard, props, editorSettings);
+		if (!selection.selectionFinishedInput) {
+			selection.Render();
+			selection.x = COLS / 2 - 15;
+			selection.y = LINES / 2 - 5;
 		}
-		else {
+		freezetime = 0;
+		if (textbox.textboxFinishedInput && selection.selectionFinishedInput) {
+			Editor::Input(fbuf, curx, cury, alert, notice, run, noticeShown, scrollY, fname, textbox, theme,
+				clipboard, props, editorSettings, selection);
+		}
+		else if (!textbox.textboxFinishedInput) {
 			run = textbox.TextboxInput();
 			if (textbox.textboxFinishedInput) {
 				if (textbox.title == "Save") {
@@ -227,6 +263,64 @@ int main(int argc, char** argv) {
 						alert.time = 3000;
 						alert.text = "Unknown command";
 					}
+				}
+				else if (textbox.title == "Change tab size") {
+					// check if integer
+					if (!Util::IsNumber(textbox.textboxInput)) {
+						alert.text = "Tab size must be an integer";
+						alert.time = 3000;
+					}
+					else {
+						// set new settings
+						props["tabsize"] = textbox.textboxInput;
+
+						// update
+						Util::UpdateSettings(props, theme, editorSettings);
+
+						// show alert
+						alert.text = "Set tab size to " + props["tabsize"];
+						alert.time = 3000;
+					}
+				}
+			}
+		}
+		else if (!selection.selectionFinishedInput) {
+			run = selection.SelectionInput();
+			if (selection.selectionFinishedInput) {
+				if (selection.title == "Settings") {
+					if (selection.selectionButtons[selection.selectionSelected] == "Change theme") {
+						selection.SelectionReset();
+						selection.title = "Change theme";
+						selection.selectionButtons = Util::GetThemes();
+					}
+					else if (selection.selectionButtons[selection.selectionSelected] == "Change tab size") {
+						textbox.TextboxReset();
+						textbox.title = "Change tab size";
+						textbox.contents = "Enter tab size as an integer";
+					}
+					else if (selection.selectionButtons[selection.selectionSelected] == "Toggle line numbers") {
+						// toggle line numbers
+						props["linenumbers"] = (props["linenumbers"] == "true")? "false" : "true";
+
+						// update
+						Util::UpdateSettings(props, theme, editorSettings);
+
+						// show alert
+						alert.text = "Line numbers set to " + string((props["linenumbers"] == "true")? "on" : "off");
+						alert.time = 3000;
+					}
+					else if (selection.selectionButtons[selection.selectionSelected] == "Close settings") {}
+				}
+				else if (selection.title == "Change theme") {
+					// change theme property
+					props["theme"] = selection.selectionButtons[selection.selectionSelected];
+
+					// update
+					Util::UpdateSettings(props, theme, editorSettings);
+
+					// set alert
+					alert.text = "Set theme to " + props["theme"];
+					alert.time = 3000;
 				}
 			}
 		}

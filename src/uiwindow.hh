@@ -14,6 +14,8 @@ namespace UI {
 			// other stuff
 			bool    isTextbox;
 			uint8_t textboxColour;
+			bool    isSelection;
+			uint8_t selectionColour;
 		
 			void Render();
 			bool ButtonPressed(string button);
@@ -25,5 +27,12 @@ namespace UI {
 			bool   textboxFinishedInput;
 			void   TextboxReset();
 			bool   TextboxInput();
+
+			// selection stuff
+			size_t          selectionSelected;
+			vector <string> selectionButtons;
+			bool            selectionFinishedInput;
+			void            SelectionReset();
+			bool            SelectionInput();
 	};
 };

@@ -77,6 +77,22 @@ void UI::Window::Render() {
 			}
 		attroff(COLOR_PAIR(textboxColour));
 	}
+
+	else if (isSelection) {
+		attron(COLOR_PAIR(selectionColour));
+		for (size_t i = 0; (i < selectionButtons.size()) && (i < h - 3); ++i) {
+			move(y + 1 + i, x + 1);
+			if (selectionSelected == i) {
+				addch('>');
+				attron(A_REVERSE);
+			}
+			mvhline(y + 1 + i, x + 2, ' ', w - 3);
+			move(y + 1 + i, x + 2);
+			addstr(selectionButtons[i].c_str());
+			if (selectionSelected == i) attroff(A_REVERSE);
+		}
+		attroff(COLOR_PAIR(selectionColour));
+	}
 }
 
 bool UI::Window::ButtonPressed(string button) {
@@ -124,6 +140,42 @@ bool UI::Window::TextboxInput() {
 				textboxInput.insert(textboxCurx, 1, input);
 				++ textboxCurx;
 			}
+			break;
+		}
+	}
+	return true;
+}
+
+void UI::Window::SelectionReset() {
+	selectionButtons.clear();
+	selectionSelected = 0;
+	selectionFinishedInput = false;
+}
+
+bool UI::Window::SelectionInput() {
+	uint16_t input = getch();
+	switch (input) {
+		case KEY_UP: {
+			if (selectionSelected > 0) {
+				-- selectionSelected;
+			}
+			break;
+		}
+		case KEY_DOWN: {
+			if (selectionSelected < selectionButtons.size() - 1) {
+				++ selectionSelected;
+			}
+			break;
+		}
+		case ctrl('q'): {
+			return false;
+		}
+		case ' ':
+		case '\n': {
+			selectionFinishedInput = true;
+			break;
+		}
+		default: {
 			break;
 		}
 	}

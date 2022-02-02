@@ -204,7 +204,7 @@ void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury, size_t& 
 void Editor::Input(
 	vector <string>& fbuf, size_t& curx, size_t& cury, UI::Alert& alert, UI::Window& notice, 
 	bool& run, bool& noticeShown, size_t& scrollY, string& fname, UI::Window& textbox,
-	Properties& theme, string& clipboard, Properties& settings, Editor::Settings& editorSettings
+	Properties& theme, string& clipboard, Properties& settings, Editor::Settings& editorSettings, UI::Window& selection
 ) {
 	uint16_t input = getch();
 	switch (input) {
@@ -353,13 +353,26 @@ void Editor::Input(
 			break;
 		}
 		case ctrl('n'): {
-			fbuf = {""};
-			cury = 0;
-			curx = 0;
-			scrollY = 0;
+			fbuf       = {""};
+			cury       = 0;
+			curx       = 0;
+			scrollY    = 0;
+			fname      = "Unnamed.txt";
 			alert.text = "New file";
 			alert.time = 3000;
 			break;
+		}
+		case ctrl('y'): {
+			// settings
+			selection.SelectionReset();
+			selection.title = "Settings";
+			selection.selectionColour = COLOUR_PAIR_EDITOR;
+			selection.selectionButtons = {
+				"Change theme",
+				"Change tab size",
+				"Toggle line numbers",
+				"Close settings"
+			};
 		}
 		case ctrl('r'): {
 			// refresh settings
