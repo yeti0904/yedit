@@ -30,7 +30,9 @@ this part of the UI shows you how many lines are in the currently opened file<br
 | Ctrl + K | Cut line            |
 | Ctrl + L | Copy line           |
 | Ctrl + U | Paste               |
-| Ctrl + N | New file
+| Ctrl + N | New file            |
+| Ctrl + R | Reload              |
+| Ctrl + Y | Settings menu       |
 | Pg Dn    | Scroll down 4 lines |
 | Pg Up    | Scroll up 4 lines   |
 
