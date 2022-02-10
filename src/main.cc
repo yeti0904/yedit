@@ -107,6 +107,22 @@ int main(int argc, char** argv) {
 			"timeBG   = black\n"
 			"timeFG   = white\n"
 		);
+		File::Write(string(getenv("HOME")) + "/.config/yedit8/themes/16c-emerald.properties",
+			"editorBG = green\n"
+			"editorFG = white\n"
+			"barBG    = lightgreen\n"
+			"barFG    = lightwhite\n"
+			"timeBG   = lightgreen\n"
+			"timeFG   = lightwhite\n"
+		);
+		File::Write(string(getenv("HOME")) + "/.config/yedit8/themes/16c-newretro.properties",
+			"editorBG = lightblue\n"
+			"editorFG = white\n"
+			"barBG    = white\n"
+			"barFG    = black\n"
+			"timeBG   = lightgreen\n"
+			"timeFG   = black\n"
+		);
 	}
 
 	UI::Alert alert;

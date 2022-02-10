@@ -1,10 +1,15 @@
 #pragma once
 
+// settings
+#include "_settings.hh"
+
 // C headers
 #include <cstdint>
 #include <unistd.h>
 #include <dirent.h>
+#ifdef YEDIT_MEM_INFO
 #include <sys/sysinfo.h>
+#endif
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>

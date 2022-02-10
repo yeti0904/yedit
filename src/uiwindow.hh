@@ -32,6 +32,7 @@ namespace UI {
 			size_t          selectionSelected;
 			vector <string> selectionButtons;
 			bool            selectionFinishedInput;
+			size_t          selectionScrollY;
 			void            SelectionReset();
 			bool            SelectionInput();
 	};

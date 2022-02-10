@@ -80,18 +80,25 @@ void UI::Window::Render() {
 
 	else if (isSelection) {
 		attron(COLOR_PAIR(selectionColour));
-		for (size_t i = 0; (i < selectionButtons.size()) && (i < h - 3); ++i) {
-			move(y + 1 + i, x + 1);
+		for (size_t i = selectionScrollY; (i - selectionScrollY < selectionButtons.size()) && (i - selectionScrollY < h - 2); ++i) {
+			move(y + 1 + (i - selectionScrollY), x + 1);
 			if (selectionSelected == i) {
 				addch('>');
 				attron(A_REVERSE);
 			}
-			mvhline(y + 1 + i, x + 2, ' ', w - 3);
-			move(y + 1 + i, x + 2);
+			mvhline(y + 1 + (i - selectionScrollY), x + 2, ' ', w - 3);
+			move(y + 1 + (i - selectionScrollY), x + 2);
 			addstr(selectionButtons[i].c_str());
 			if (selectionSelected == i) attroff(A_REVERSE);
 		}
 		attroff(COLOR_PAIR(selectionColour));
+		attron(COLOR_PAIR(colour_pair));
+		if (selectionScrollY != 0) {
+			mvaddch(y, x + w - 1, ACS_UARROW);
+		}
+		if (selectionScrollY + h - 2 < selectionButtons.size()) {
+			mvaddch(y + h - 1, x + w - 1, ACS_DARROW);
+		}
 	}
 }
 
@@ -148,8 +155,9 @@ bool UI::Window::TextboxInput() {
 
 void UI::Window::SelectionReset() {
 	selectionButtons.clear();
-	selectionSelected = 0;
+	selectionSelected       = 0;
 	selectionFinishedInput = false;
+	selectionScrollY       = 0;
 }
 
 bool UI::Window::SelectionInput() {
@@ -158,12 +166,18 @@ bool UI::Window::SelectionInput() {
 		case KEY_UP: {
 			if (selectionSelected > 0) {
 				-- selectionSelected;
+				if (selectionSelected < selectionScrollY) {
+					-- selectionScrollY;
+				}
 			}
 			break;
 		}
 		case KEY_DOWN: {
 			if (selectionSelected < selectionButtons.size() - 1) {
 				++ selectionSelected;
+				if (selectionSelected > selectionScrollY + h - 3) {
+					++ selectionScrollY;
+				}
 			}
 			break;
 		}

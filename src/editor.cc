@@ -17,8 +17,10 @@ const string currentTime() {
 }
 
 void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury, Editor::Settings settings) {
+	#ifdef YEDIT_MEM_INFO
 	struct sysinfo info;
 	sysinfo(&info);
+	#endif
 
 	// render title bar
 	attron(COLOR_PAIR(COLOUR_PAIR_BAR));
@@ -37,6 +39,9 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	Here lies yedit memory usage
 	3rd January 2022 - 14th January 2022
 
+	*/
+	#ifdef YEDIT_MEM_INFO
+
 	attron(COLOR_PAIR(COLOUR_PAIR_MEM));
 	string mem;
 	// get memory usage percentage
@@ -44,7 +49,7 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	move(0, COLS - mem.length() - currentTime().length());
 	addstr(mem.c_str());
 	attroff(COLOR_PAIR(COLOUR_PAIR_MEM));
-	*/
+	#endif
 
 	// render editor
 	attron(COLOR_PAIR(COLOUR_PAIR_EDITOR));
@@ -56,7 +61,9 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	size_t lines = fbuf.size();
 
 	// render editor contents
+	size_t cols;
 	for (size_t i = scrollY; i < fbuf.size(); ++i) {
+		cols = 0;
 		//if (i + scrollY < fbuf.size()) {
 			if (settings.lineNumbers) {
 				move(i - scrollY + 1, 0);
@@ -64,11 +71,12 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 				move(i - scrollY + 1, to_string(lines + 1).length());
 				addch(ACS_VLINE);
 				move(i - scrollY + 1, to_string(lines + 1).length() + 2);
+				cols += to_string(lines + 1).length() + 2;
 			}
 			else
 				move(i - scrollY + 1, 0);
 			// addstr(fbuf[i + scrollY].c_str());
-			for (size_t j = 0; j <= fbuf[i].length(); ++j) {
+			for (size_t j = 0; (j <= fbuf[i].length()) && (cols < COLS); ++j) {
 				if ((cury == i) && (curx == j))
 					attron(A_REVERSE);
 				switch (fbuf[i][j]) {
@@ -76,22 +84,29 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 						if ((cury == i) && (curx == j)) {
 							addch(' ');
 							attron(A_REVERSE);
-							for (size_t k = 0; k < settings.tabSize - 1; ++k) {
+							for (size_t k = 0; k < settings.tabSize; ++k) {
 								addch(' ');
+								++ cols;
 							}
 							attroff(A_REVERSE);
 						}
-						else
+						else {
 							for (size_t k = 0; k < settings.tabSize; ++k) {
 								addch(' ');
+								++ cols;
 							}
+						}
 						break;
 					}
 					default: {
-						if ((fbuf[i][j] == '\0') && !settings.debugNull)
+						if ((fbuf[i][j] == '\0') && !settings.debugNull) {
 							addch(' ');
-						else if (fbuf[i][j] != '\r')
+							++ cols;
+						}
+						else if (fbuf[i][j] != '\r') {
 							addch(fbuf[i][j]);
+							++ cols;
+						}
 						break;
 					}
 				}
@@ -118,7 +133,7 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 		addch(' ');
 		attroff(COLOR_PAIR(COLOUR_PAIR_CURSOR));
 		attron(COLOR_PAIR(COLOUR_PAIR_EDITOR));
-		for (uint8_t i = 0; i < tabSize - 1; ++i) {
+		for (uint8_t i = 0; i < settings.tabSize - 1; ++i) {
 			addch(' ');
 		}
 		attroff(COLOR_PAIR(COLOUR_PAIR_EDITOR));
@@ -164,6 +179,9 @@ void Editor::OpenFile(string& fname, vector <string>& fbuf, UI::Alert& alert) {
 		fbuf.push_back(line);
 	}
 	fhnd.close();
+	if (fbuf.size() == 0) {
+		fbuf.push_back("");
+	}
 	alert.text = "Opened " + fname;
 	alert.time = 3000;
 }
