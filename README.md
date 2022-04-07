@@ -1,3 +1,6 @@
+# NOTE
+yedit beta 8 (rewrite 12) is NO LONGER SUPPORTED
+
 # yedit
 usable text editor
 
