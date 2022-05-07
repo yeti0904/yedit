@@ -16,7 +16,7 @@ const string currentTime() {
 	return buf;
 }
 
-void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury, Editor::Settings settings) {
+void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury, Editor::Settings settings, size_t& scrollX) {
 	#ifdef YEDIT_MEM_INFO
 	struct sysinfo info;
 	sysinfo(&info);
@@ -76,22 +76,21 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 			else
 				move(i - scrollY + 1, 0);
 			// addstr(fbuf[i + scrollY].c_str());
-			for (size_t j = 0; (j <= fbuf[i].length()) && (cols < COLS); ++j) {
+			for (size_t j = scrollX; (j <= fbuf[i].length()) && (cols < COLS); ++j) {
 				if ((cury == i) && (curx == j))
 					attron(A_REVERSE);
 				switch (fbuf[i][j]) {
 					case '\t': {
 						if ((cury == i) && (curx == j)) {
 							addch(' ');
-							attron(A_REVERSE);
-							for (size_t k = 0; k < settings.tabSize; ++k) {
+							attroff(A_REVERSE);
+							for (size_t k = 0; k <= settings.tabSize; ++k) {
 								addch(' ');
 								++ cols;
 							}
-							attroff(A_REVERSE);
 						}
 						else {
-							for (size_t k = 0; k < settings.tabSize; ++k) {
+							for (size_t k = 0; k <= settings.tabSize; ++k) {
 								addch(' ');
 								++ cols;
 							}
@@ -222,7 +221,8 @@ void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury, size_t& 
 void Editor::Input(
 	vector <string>& fbuf, size_t& curx, size_t& cury, UI::Alert& alert, UI::Window& notice, 
 	bool& run, bool& noticeShown, size_t& scrollY, string& fname, UI::Window& textbox,
-	Properties& theme, string& clipboard, Properties& settings, Editor::Settings& editorSettings, UI::Window& selection
+	Properties& theme, string& clipboard, Properties& settings, Editor::Settings& editorSettings, UI::Window& selection,
+	size_t& scrollX
 ) {
 	uint16_t input = getch();
 	switch (input) {
