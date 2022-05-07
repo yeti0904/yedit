@@ -10,3 +10,6 @@ build:
 debug:
 	mkdir -p bin
 	$(CC) $(src) -g $(arg) -o $(out)
+
+install:
+	cp $(out) /usr/bin/
