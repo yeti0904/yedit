@@ -46,7 +46,6 @@ int main(int argc, char** argv) {
 	bool            run         = true;
 	uint16_t        freezetime  = 0;
 	string          clipboard   = "";
-	size_t          scrollX     = 5;
 
 	if (!File::DirExists(string(getenv("HOME")) + "/.config/yedit8")) {
 		File::CreateDirectory(string(getenv("HOME")) + "/.config/yedit8");
@@ -221,7 +220,7 @@ int main(int argc, char** argv) {
 	while (run) {
 		Editor::Render(
 			"fn: " + fname + " | lines: " + to_string(fbuf.size()) + " | (" + to_string(curx) + ":" + to_string(cury) + ")"
-		, fbuf, scrollY, curx, cury, editorSettings, scrollX);
+		, fbuf, scrollY, curx, cury, editorSettings);
 		if (alert.time > 0) {
 			alert.DoTime();
 			alert.Render();
@@ -241,7 +240,7 @@ int main(int argc, char** argv) {
 		freezetime = 0;
 		if (textbox.textboxFinishedInput && selection.selectionFinishedInput) {
 			Editor::Input(fbuf, curx, cury, alert, notice, run, noticeShown, scrollY, fname, textbox, theme,
-				clipboard, props, editorSettings, selection, scrollX);
+				clipboard, props, editorSettings, selection);
 		}
 		else if (!textbox.textboxFinishedInput) {
 			run = textbox.TextboxInput();
