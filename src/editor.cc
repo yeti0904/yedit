@@ -220,17 +220,12 @@ void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury, size_t& 
 }
 
 void Editor::Input(
-	vector <string>& fbuf, size_t& curx, size_t& cury, UI::Alert& alert, UI::Window& notice, 
-	bool& run, bool& noticeShown, size_t& scrollY, string& fname, UI::Window& textbox,
+	vector <string>& fbuf, size_t& curx, size_t& cury, UI::Alert& alert, 
+	bool& run, size_t& scrollY, string& fname, UI::Window& textbox,
 	Properties& theme, string& clipboard, Properties& settings, Editor::Settings& editorSettings, UI::Window& selection
 ) {
 	uint16_t input = getch();
 	switch (input) {
-		case KEY_RESIZE: {
-			notice.w = COLS - 4;
-			notice.h = LINES - 4;
-			break;
-		}
 		case 127:
 		case KEY_BACKSPACE: {
 			Editor::Backspace(fbuf, curx, cury);
@@ -431,12 +426,6 @@ void Editor::Input(
 		case '\n': {
 			Editor::Newline(fbuf, curx, cury, scrollY);
 			break;
-		}
-		case ' ': {
-			if (noticeShown) {
-				noticeShown = false;
-				break;
-			}
 		}
 		default: {
 			if (((input >= ' ') && (input <= '~')) || (input == '\t')) {
