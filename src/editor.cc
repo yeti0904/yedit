@@ -309,6 +309,19 @@ void Editor::Input(
 			else Editor::SaveFile(fname, fbuf, alert);
 			break;
 		}
+		case ctrl('x'): {
+			// save
+			if (fname == "Unnamed.txt") {
+				textbox.TextboxReset();
+				textbox.contents             = "Enter file name:";
+				textbox.title                = "Save";
+				textbox.textboxFinishedInput = false;
+			}
+			else Editor::SaveFile(fname, fbuf, alert);
+			run = false;
+
+			break;
+		}
 		case ctrl('w'): {
 			// Save As
 			textbox.TextboxReset();
