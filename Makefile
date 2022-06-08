@@ -14,4 +14,4 @@ debug:
 install:
 	cp $(out) /usr/bin/
 	sudo update-alternatives --install /usr/bin/editor editor /usr/bin/yedit 0
-	sudo update-alternatives --config
+	sudo update-alternatives --config editor
