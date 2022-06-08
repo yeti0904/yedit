@@ -17,10 +17,8 @@ const string currentTime() {
 }
 
 void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury, Editor::Settings settings) {
-	#ifdef YEDIT_MEM_INFO
 	struct sysinfo info;
 	sysinfo(&info);
-	#endif
 
 	// render title bar
 	attron(COLOR_PAIR(COLOUR_PAIR_BAR));
@@ -28,29 +26,19 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	mvprintw(0, 0, APP_NAME);
 	attroff(COLOR_PAIR(COLOUR_PAIR_BAR));
 
-	// render title bar info
+	// render memory usage
 	attron(COLOR_PAIR(COLOUR_PAIR_TIME));
-	move(0, COLS - currentTime().length());
-	addstr(currentTime().c_str());
-	attroff(COLOR_PAIR(COLOUR_PAIR_TIME));
-
-	/*
-
-	Here lies yedit memory usage
-	3rd January 2022 - 14th January 2022
-
-	*/
-	#ifdef YEDIT_MEM_INFO
-
-	attron(COLOR_PAIR(COLOUR_PAIR_MEM));
 	string mem;
 	// get memory usage percentage
 	mem = to_string((int)((((double) info.totalram - (double) info.freeram) / info.totalram) * 100)) + "%";
-	move(0, COLS - mem.length() - currentTime().length());
+	move(0, COLS - 1 - mem.length() - currentTime().length());
 	addstr(mem.c_str());
-	attroff(COLOR_PAIR(COLOUR_PAIR_MEM));
-	#endif
 
+	// render title bar info
+	move(0, COLS - currentTime().length());
+	addstr(currentTime().c_str());
+	attroff(COLOR_PAIR(COLOUR_PAIR_TIME));
+	
 	// render editor
 	attron(COLOR_PAIR(COLOUR_PAIR_EDITOR));
 	for (int i = 1; i < LINES - 1; ++i) {
