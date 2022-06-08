@@ -196,7 +196,7 @@ int main(int argc, char** argv) {
 
 	while (run) {
 		Editor::Render(
-			"fn: " + fname + " | lines: " + to_string(fbuf.size()) + " | (" + to_string(curx) + ":" + to_string(cury) + ")"
+			fname + " | lines: " + to_string(fbuf.size()) + " | (" + to_string(curx) + ":" + to_string(cury) + ")"
 		, fbuf, scrollY, curx, cury, editorSettings);
 		if (alert.time > 0) {
 			alert.DoTime();
