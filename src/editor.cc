@@ -16,11 +16,9 @@ const string currentTime() {
 	return buf;
 }
 
-void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury, Editor::Settings settings, size_t& scrollX) {
-	#ifdef YEDIT_MEM_INFO
+void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, size_t curx, size_t cury, Editor::Settings settings) {
 	struct sysinfo info;
 	sysinfo(&info);
-	#endif
 
 	// render title bar
 	attron(COLOR_PAIR(COLOUR_PAIR_BAR));
@@ -28,29 +26,19 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 	mvprintw(0, 0, APP_NAME);
 	attroff(COLOR_PAIR(COLOUR_PAIR_BAR));
 
-	// render title bar info
+	// render memory usage
 	attron(COLOR_PAIR(COLOUR_PAIR_TIME));
-	move(0, COLS - currentTime().length());
-	addstr(currentTime().c_str());
-	attroff(COLOR_PAIR(COLOUR_PAIR_TIME));
-
-	/*
-
-	Here lies yedit memory usage
-	3rd January 2022 - 14th January 2022
-
-	*/
-	#ifdef YEDIT_MEM_INFO
-
-	attron(COLOR_PAIR(COLOUR_PAIR_MEM));
 	string mem;
 	// get memory usage percentage
 	mem = to_string((int)((((double) info.totalram - (double) info.freeram) / info.totalram) * 100)) + "%";
-	move(0, COLS - mem.length() - currentTime().length());
+	move(0, COLS - 1 - mem.length() - currentTime().length());
 	addstr(mem.c_str());
-	attroff(COLOR_PAIR(COLOUR_PAIR_MEM));
-	#endif
 
+	// render title bar info
+	move(0, COLS - currentTime().length());
+	addstr(currentTime().c_str());
+	attroff(COLOR_PAIR(COLOUR_PAIR_TIME));
+	
 	// render editor
 	attron(COLOR_PAIR(COLOUR_PAIR_EDITOR));
 	for (int i = 1; i < LINES - 1; ++i) {
@@ -76,21 +64,22 @@ void Editor::Render(string statusbar, vector <string>& fbuf, size_t scrollY, siz
 			else
 				move(i - scrollY + 1, 0);
 			// addstr(fbuf[i + scrollY].c_str());
-			for (size_t j = scrollX; (j <= fbuf[i].length()) && (cols < COLS); ++j) {
+			for (size_t j = 0; (j <= fbuf[i].length()) && (cols < COLS); ++j) {
 				if ((cury == i) && (curx == j))
 					attron(A_REVERSE);
 				switch (fbuf[i][j]) {
 					case '\t': {
 						if ((cury == i) && (curx == j)) {
 							addch(' ');
-							attroff(A_REVERSE);
-							for (size_t k = 0; k <= settings.tabSize; ++k) {
+							attron(A_REVERSE);
+							for (size_t k = 0; k < settings.tabSize; ++k) {
 								addch(' ');
 								++ cols;
 							}
+							attroff(A_REVERSE);
 						}
 						else {
-							for (size_t k = 0; k <= settings.tabSize; ++k) {
+							for (size_t k = 0; k < settings.tabSize; ++k) {
 								addch(' ');
 								++ cols;
 							}
@@ -219,18 +208,12 @@ void Editor::Newline(vector <string>& fbuf, size_t& curx, size_t& cury, size_t& 
 }
 
 void Editor::Input(
-	vector <string>& fbuf, size_t& curx, size_t& cury, UI::Alert& alert, UI::Window& notice, 
-	bool& run, bool& noticeShown, size_t& scrollY, string& fname, UI::Window& textbox,
-	Properties& theme, string& clipboard, Properties& settings, Editor::Settings& editorSettings, UI::Window& selection,
-	size_t& scrollX
+	vector <string>& fbuf, size_t& curx, size_t& cury, UI::Alert& alert, 
+	bool& run, size_t& scrollY, string& fname, UI::Window& textbox,
+	Properties& theme, string& clipboard, Properties& settings, Editor::Settings& editorSettings, UI::Window& selection
 ) {
 	uint16_t input = getch();
 	switch (input) {
-		case KEY_RESIZE: {
-			notice.w = COLS - 4;
-			notice.h = LINES - 4;
-			break;
-		}
 		case 127:
 		case KEY_BACKSPACE: {
 			Editor::Backspace(fbuf, curx, cury);
@@ -307,6 +290,19 @@ void Editor::Input(
 				textbox.textboxFinishedInput = false;
 			}
 			else Editor::SaveFile(fname, fbuf, alert);
+			break;
+		}
+		case ctrl('x'): {
+			// save
+			if (fname == "Unnamed.txt") {
+				textbox.TextboxReset();
+				textbox.contents             = "Enter file name:";
+				textbox.title                = "Save";
+				textbox.textboxFinishedInput = false;
+			}
+			else Editor::SaveFile(fname, fbuf, alert);
+			run = false;
+
 			break;
 		}
 		case ctrl('w'): {
@@ -418,12 +414,6 @@ void Editor::Input(
 		case '\n': {
 			Editor::Newline(fbuf, curx, cury, scrollY);
 			break;
-		}
-		case ' ': {
-			if (noticeShown) {
-				noticeShown = false;
-				break;
-			}
 		}
 		default: {
 			if (((input >= ' ') && (input <= '~')) || (input == '\t')) {
