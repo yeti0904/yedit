@@ -7,5 +7,5 @@ jobs:
     steps:
       - name: check out repo
         uses: actions/checkout@v3
-			- name: build it
-				run: make build
+      - name: build it
+        run: make build
