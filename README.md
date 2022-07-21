@@ -1,6 +1,8 @@
 # NOTE
 yedit beta 8 (rewrite 12) is NO LONGER SUPPORTED
 
+it has been replaced by <a href="https://github.com/MESYETI/noro">noro</a>
+
 # yedit
 usable text editor
 
